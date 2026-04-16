@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoWear — Wear Nature, Feel the Future</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --green:#2d5a27;--green-mid:#4a7c3f;--green-light:#7db87a;--green-pale:#e8f5e2;
+  --beige:#f5f0e8;--beige-dark:#e8dfc8;--brown:#6b4c2a;
+  --gold:#c9a84c;--white:#fefefe;--text:#1a2e1a;--text-muted:#5a6b5a;
+  --font-display:'Playfair Display',serif;--font-body:'DM Sans',sans-serif;
+  --radius:12px;--shadow:0 4px 24px rgba(45,90,39,0.12);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--beige);color:var(--text);overflow-x:hidden}
+
+/* LOADING */
+#loader{position:fixed;inset:0;background:var(--green);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;transition:opacity 0.6s,visibility 0.6s}
+#loader.hide{opacity:0;visibility:hidden}
+.loader-logo{font-family:var(--font-display);font-size:2.5rem;color:var(--white);letter-spacing:0.1em}
+.loader-bar{width:180px;height:2px;background:rgba(255,255,255,0.2);border-radius:2px;overflow:hidden}
+.loader-fill{height:100%;width:0;background:var(--gold);border-radius:2px;animation:loadfill 1.8s ease forwards}
+@keyframes loadfill{to{width:100%}}
+.loader-leaves{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.l-leaf{position:absolute;font-size:1.5rem;animation:leaffall 3s linear infinite;opacity:0.3}
+@keyframes leaffall{0%{transform:translateY(-20px) rotate(0deg);opacity:0}50%{opacity:0.4}100%{transform:translateY(100vh) rotate(360deg);opacity:0}}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:70px;transition:all 0.3s}
+nav.scrolled{background:rgba(254,254,254,0.92);backdrop-filter:blur(12px);box-shadow:0 2px 20px rgba(45,90,39,0.1)}
+.nav-logo{font-family:var(--font-display);font-size:1.6rem;color:var(--white);font-weight:700;text-decoration:none;transition:color 0.3s}
+nav.scrolled .nav-logo{color:var(--green)}
+.nav-links{display:flex;gap:32px;list-style:none;align-items:center}
+.nav-links a{text-decoration:none;color:rgba(255,255,255,0.9);font-size:0.875rem;font-weight:500;letter-spacing:0.04em;transition:color 0.3s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;width:0;height:1px;background:var(--gold);transition:width 0.3s}
+.nav-links a:hover::after{width:100%}
+nav.scrolled .nav-links a{color:var(--text-muted)}
+nav.scrolled .nav-links a:hover{color:var(--green)}
+.nav-actions{display:flex;gap:16px;align-items:center}
+.nav-icon{background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.9);font-size:1.1rem;position:relative;transition:transform 0.2s}
+.nav-icon:hover{transform:scale(1.1)}
+nav.scrolled .nav-icon{color:var(--text)}
+.cart-count{position:absolute;top:-6px;right:-6px;width:16px;height:16px;background:var(--gold);border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center;color:var(--green);font-weight:700}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.hamburger span{display:block;width:22px;height:2px;background:white;border-radius:2px;transition:all 0.3s}
+nav.scrolled .hamburger span{background:var(--text)}
+
+/* PAGES */
+.page{display:none;min-height:100vh}
+.page.active{display:block}
+
+/* ========== HOME ========== */
+.hero{height:100vh;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#1a3d16 0%,#2d5a27 40%,#3d7a35 70%,#1a3d16 100%)}
+.hero-leaves{position:absolute;inset:0;pointer-events:none}
+.h-leaf{position:absolute;opacity:0.07}
+.hero-pattern{position:absolute;inset:0;background-image:radial-gradient(circle at 20% 80%, rgba(201,168,76,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(125,184,122,0.1) 0%, transparent 50%)}
+.hero-content{position:relative;z-index:2;text-align:center;padding:0 20px}
+.hero-badge{display:inline-block;border:1px solid rgba(201,168,76,0.5);color:var(--gold);font-size:0.75rem;letter-spacing:0.15em;padding:6px 20px;border-radius:20px;margin-bottom:24px;text-transform:uppercase;animation:fadeup 0.8s ease both}
+.hero-title{font-family:var(--font-display);font-size:clamp(2.8rem,7vw,5.5rem);color:var(--white);line-height:1.1;margin-bottom:20px;animation:fadeup 0.8s 0.15s ease both}
+.hero-title em{color:var(--gold);font-style:italic}
+.hero-sub{color:rgba(255,255,255,0.75);font-size:1.1rem;font-weight:300;max-width:480px;margin:0 auto 40px;line-height:1.7;animation:fadeup 0.8s 0.3s ease both}
+.hero-cta{display:inline-flex;gap:16px;flex-wrap:wrap;justify-content:center;animation:fadeup 0.8s 0.45s ease both}
+.btn-primary{background:var(--gold);color:var(--green);padding:14px 36px;border-radius:40px;font-weight:500;text-decoration:none;letter-spacing:0.04em;font-size:0.9rem;border:none;cursor:pointer;transition:all 0.3s;display:inline-block}
+.btn-primary:hover{background:#d4b055;transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,0.4)}
+.btn-outline{background:transparent;color:var(--white);padding:14px 36px;border-radius:40px;font-weight:500;text-decoration:none;letter-spacing:0.04em;font-size:0.9rem;border:1px solid rgba(255,255,255,0.4);cursor:pointer;transition:all 0.3s;display:inline-block}
+.btn-outline:hover{background:rgba(255,255,255,0.1);transform:translateY(-2px)}
+.hero-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,0.5);font-size:0.75rem;letter-spacing:0.1em;animation:bounce 2s ease infinite}
+.scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,rgba(255,255,255,0.5),transparent)}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+@keyframes fadeup{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* Floating models banner */
+.models-banner{display:flex;gap:20px;justify-content:center;position:absolute;bottom:80px;left:50%;transform:translateX(-50%);z-index:2}
+.model-card{width:120px;height:160px;border-radius:12px;overflow:hidden;border:2px solid rgba(255,255,255,0.2);animation:floatcard 4s ease-in-out infinite}
+.model-card:nth-child(2){animation-delay:0.5s;transform:translateY(-12px)}
+.model-card:nth-child(3){animation-delay:1s}
+.model-card .model-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem}
+.mc1{background:linear-gradient(135deg,#4a7c3f,#2d5a27)}
+.mc2{background:linear-gradient(135deg,#6b8f5a,#3d6b30)}
+.mc3{background:linear-gradient(135deg,#5a7f45,#2a5020)}
+@keyframes floatcard{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* Eco badges strip */
+.eco-strip{background:var(--green);padding:12px 0;overflow:hidden}
+.eco-strip-inner{display:flex;gap:48px;animation:stripscroll 20s linear infinite;white-space:nowrap}
+.eco-item{display:inline-flex;align-items:center;gap:10px;color:rgba(255,255,255,0.85);font-size:0.8rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:500}
+.eco-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0}
+@keyframes stripscroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* Sections */
+section{padding:80px 5%}
+.section-label{font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--green-mid);font-weight:500;margin-bottom:12px}
+.section-title{font-family:var(--font-display);font-size:clamp(2rem,4vw,3rem);color:var(--text);line-height:1.2;margin-bottom:16px}
+.section-title em{color:var(--green);font-style:italic}
+.section-sub{color:var(--text-muted);font-size:1rem;line-height:1.7;max-width:520px}
+
+/* Featured products */
+.featured{background:var(--white)}
+.featured-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:48px;flex-wrap:wrap;gap:16px}
+.featured-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px}
+.prod-card{background:var(--beige);border-radius:16px;overflow:hidden;transition:transform 0.3s,box-shadow 0.3s;cursor:pointer}
+.prod-card:hover{transform:translateY(-6px);box-shadow:0 16px 48px rgba(45,90,39,0.15)}
+.prod-img{height:280px;display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative;overflow:hidden;transition:transform 0.4s}
+.prod-card:hover .prod-img{transform:scale(1.03)}
+.prod-badges{position:absolute;top:12px;left:12px;display:flex;flex-direction:column;gap:6px}
+.badge{font-size:0.65rem;padding:4px 10px;border-radius:20px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase}
+.badge-organic{background:var(--green-pale);color:var(--green)}
+.badge-sale{background:var(--gold);color:var(--green)}
+.badge-new{background:var(--green);color:white}
+.prod-wish{position:absolute;top:12px;right:12px;background:white;border:none;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.9rem;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.prod-wish:hover{transform:scale(1.1)}
+.prod-wish.active{color:#e05;background:#fff0f0}
+.prod-info{padding:16px 20px 20px}
+.prod-cat{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--green-mid);font-weight:500;margin-bottom:4px}
+.prod-name{font-family:var(--font-display);font-size:1.1rem;color:var(--text);margin-bottom:8px}
+.prod-price-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.prod-price{font-size:1.15rem;font-weight:500;color:var(--green)}
+.prod-price-orig{font-size:0.85rem;color:var(--text-muted);text-decoration:line-through}
+.btn-cart{background:var(--green);color:white;border:none;padding:8px 18px;border-radius:8px;font-size:0.8rem;cursor:pointer;font-family:var(--font-body);font-weight:500;transition:all 0.2s}
+.btn-cart:hover{background:var(--green-mid)}
+.btn-cart:active{transform:scale(0.97)}
+
+/* Why EcoWear */
+.why{background:var(--beige)}
+.why-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px;margin-top:48px}
+.why-card{background:var(--white);border-radius:16px;padding:28px 24px;text-align:center;transition:transform 0.3s,box-shadow 0.3s}
+.why-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.why-icon{width:56px;height:56px;background:var(--green-pale);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 16px}
+.why-title{font-family:var(--font-display);font-size:1.1rem;color:var(--text);margin-bottom:8px}
+.why-text{font-size:0.875rem;color:var(--text-muted);line-height:1.6}
+
+/* Newsletter */
+.newsletter{background:var(--green);padding:64px 5%;text-align:center}
+.newsletter h2{font-family:var(--font-display);font-size:2rem;color:white;margin-bottom:12px}
+.newsletter p{color:rgba(255,255,255,0.75);margin-bottom:32px}
+.nl-form{display:flex;gap:12px;max-width:420px;margin:0 auto;flex-wrap:wrap;justify-content:center}
+.nl-form input{flex:1;min-width:200px;padding:14px 20px;border-radius:40px;border:none;background:rgba(255,255,255,0.15);color:white;font-family:var(--font-body);outline:none}
+.nl-form input::placeholder{color:rgba(255,255,255,0.5)}
+.nl-form input:focus{background:rgba(255,255,255,0.2)}
+
+/* ========== ABOUT ========== */
+.about-hero{background:linear-gradient(135deg,#1a3d16,#2d5a27);padding:140px 5% 80px;text-align:center}
+.about-hero h1{font-family:var(--font-display);font-size:clamp(2.2rem,5vw,4rem);color:white;margin-bottom:16px}
+.about-hero p{color:rgba(255,255,255,0.75);font-size:1.1rem;max-width:560px;margin:0 auto}
+.about-story{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;padding:80px 5%}
+.about-visual{background:var(--green-pale);border-radius:20px;height:400px;display:flex;align-items:center;justify-content:center;font-size:6rem}
+.about-text .label{font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--green-mid);font-weight:500;margin-bottom:12px}
+.about-text h2{font-family:var(--font-display);font-size:2.2rem;color:var(--text);margin-bottom:20px;line-height:1.25}
+.about-text p{color:var(--text-muted);line-height:1.8;margin-bottom:16px}
+.stats-row{display:flex;gap:32px;margin-top:32px;flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-num{font-family:var(--font-display);font-size:2rem;color:var(--green);font-weight:700}
+.stat-label{font-size:0.8rem;color:var(--text-muted)}
+.values{background:var(--green);padding:80px 5%}
+.values-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:24px;margin-top:48px}
+.val-card{background:rgba(255,255,255,0.08);border-radius:16px;padding:28px 24px;border:1px solid rgba(255,255,255,0.12)}
+.val-icon{font-size:2rem;margin-bottom:12px}
+.val-title{font-family:var(--font-display);font-size:1.1rem;color:white;margin-bottom:8px}
+.val-text{font-size:0.85rem;color:rgba(255,255,255,0.65);line-height:1.6}
+
+/* ========== PRODUCTS ========== */
+.products-header{background:linear-gradient(135deg,#1a3d16,#2d5a27);padding:140px 5% 60px}
+.products-header h1{font-family:var(--font-display);font-size:clamp(2rem,4vw,3.5rem);color:white;margin-bottom:8px}
+.search-bar-wrap{max-width:400px;position:relative;margin-top:24px}
+.search-bar-wrap input{width:100%;padding:14px 20px 14px 48px;border-radius:40px;border:none;background:rgba(255,255,255,0.15);color:white;font-family:var(--font-body);font-size:0.9rem;outline:none;backdrop-filter:blur(8px)}
+.search-bar-wrap input::placeholder{color:rgba(255,255,255,0.55)}
+.search-bar-wrap input:focus{background:rgba(255,255,255,0.22)}
+.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.6);font-size:1rem;pointer-events:none}
+.cat-tabs{display:flex;gap:12px;padding:32px 5%;flex-wrap:wrap}
+.cat-tab{padding:10px 24px;border-radius:40px;border:1.5px solid var(--beige-dark);background:transparent;cursor:pointer;font-family:var(--font-body);font-size:0.85rem;font-weight:500;color:var(--text-muted);transition:all 0.2s}
+.cat-tab.active,.cat-tab:hover{background:var(--green);border-color:var(--green);color:white}
+.products-grid{padding:0 5% 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:24px}
+.no-results{text-align:center;padding:80px;color:var(--text-muted);grid-column:1/-1;display:none}
+.no-results.show{display:block}
+
+/* ========== SALE ========== */
+.sale-hero{background:linear-gradient(135deg,#6b4c2a,#8b6035);padding:140px 5% 60px;text-align:center}
+.sale-hero h1{font-family:var(--font-display);font-size:clamp(2.5rem,5vw,4rem);color:white;margin-bottom:8px}
+.sale-hero p{color:rgba(255,255,255,0.75);font-size:1.1rem}
+.countdown{display:flex;gap:20px;justify-content:center;margin-top:32px;flex-wrap:wrap}
+.cd-box{background:rgba(255,255,255,0.15);border-radius:12px;padding:16px 20px;min-width:80px;text-align:center;backdrop-filter:blur(8px)}
+.cd-num{font-family:var(--font-display);font-size:2rem;color:white;font-weight:700}
+.cd-label{font-size:0.7rem;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em}
+.sale-grid{padding:48px 5% 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px}
+
+/* ========== CONTACT ========== */
+.contact-hero{background:linear-gradient(135deg,#1a3d16,#2d5a27);padding:140px 5% 60px;text-align:center}
+.contact-hero h1{font-family:var(--font-display);font-size:clamp(2rem,4vw,3.5rem);color:white}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:64px 5%}
+.contact-form-wrap{background:white;border-radius:20px;padding:40px;box-shadow:var(--shadow)}
+.contact-form-wrap h2{font-family:var(--font-display);font-size:1.6rem;color:var(--text);margin-bottom:24px}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-size:0.8rem;font-weight:500;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em}
+.form-group input,.form-group textarea{width:100%;padding:12px 16px;border:1.5px solid var(--beige-dark);border-radius:10px;font-family:var(--font-body);font-size:0.9rem;color:var(--text);background:var(--beige);outline:none;transition:border-color 0.2s}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--green-light)}
+.form-group textarea{height:120px;resize:vertical}
+.contact-info h3{font-family:var(--font-display);font-size:1.4rem;color:var(--text);margin-bottom:20px}
+.info-item{display:flex;gap:16px;align-items:flex-start;margin-bottom:24px}
+.info-icon{width:44px;height:44px;background:var(--green-pale);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.info-label{font-size:0.8rem;color:var(--text-muted);margin-bottom:4px}
+.info-val{font-weight:500;color:var(--text)}
+.wa-btn{display:flex;align-items:center;gap:10px;background:#25d366;color:white;padding:14px 24px;border-radius:12px;text-decoration:none;font-weight:500;margin-top:24px;transition:all 0.2s;width:fit-content}
+.wa-btn:hover{background:#1ebe5d;transform:translateY(-2px)}
+.map-section{background:var(--green-pale);border-radius:16px;height:280px;display:flex;align-items:center;justify-content:center;font-size:3rem;flex-direction:column;gap:12px;margin-top:24px;border:1.5px solid var(--beige-dark);color:var(--green);font-family:var(--font-display);font-size:1.1rem}
+
+/* ========== AUTH ========== */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a3d16,#2d5a27);padding:80px 20px}
+.auth-card{background:white;border-radius:24px;padding:48px 40px;width:100%;max-width:420px;box-shadow:0 24px 64px rgba(0,0,0,0.2)}
+.auth-logo{font-family:var(--font-display);font-size:1.8rem;color:var(--green);text-align:center;margin-bottom:8px}
+.auth-sub{text-align:center;color:var(--text-muted);font-size:0.9rem;margin-bottom:32px}
+.auth-form h2{font-family:var(--font-display);font-size:1.6rem;color:var(--text);margin-bottom:24px;text-align:center}
+.auth-switch{text-align:center;margin-top:20px;font-size:0.875rem;color:var(--text-muted)}
+.auth-switch a{color:var(--green);font-weight:500;cursor:pointer;text-decoration:none}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--text-muted);font-size:0.8rem}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--beige-dark)}
+.social-btn{width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--beige-dark);background:white;font-family:var(--font-body);font-size:0.9rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--text)}
+.social-btn:hover{background:var(--beige);border-color:var(--green-light)}
+
+/* CART SIDEBAR */
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;opacity:0;visibility:hidden;transition:all 0.3s;backdrop-filter:blur(4px)}
+.cart-overlay.open{opacity:1;visibility:visible}
+.cart-sidebar{position:fixed;right:0;top:0;bottom:0;width:380px;max-width:100%;background:white;z-index:201;transform:translateX(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column}
+.cart-sidebar.open{transform:translateX(0)}
+.cart-head{padding:24px;border-bottom:1px solid var(--beige-dark);display:flex;justify-content:space-between;align-items:center}
+.cart-head h3{font-family:var(--font-display);font-size:1.3rem;color:var(--text)}
+.cart-close{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-muted);transition:color 0.2s}
+.cart-close:hover{color:var(--text)}
+.cart-items{flex:1;overflow-y:auto;padding:20px}
+.cart-empty{text-align:center;padding:60px 20px;color:var(--text-muted)}
+.cart-empty div{font-size:3rem;margin-bottom:12px}
+.cart-item{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--beige-dark)}
+.ci-img{width:64px;height:64px;border-radius:10px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.ci-info{flex:1}
+.ci-name{font-size:0.9rem;font-weight:500;color:var(--text);margin-bottom:4px}
+.ci-price{font-size:0.875rem;color:var(--green);font-weight:500}
+.ci-qty{display:flex;align-items:center;gap:8px;margin-top:8px}
+.qty-btn{width:24px;height:24px;border-radius:6px;border:1px solid var(--beige-dark);background:none;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.qty-btn:hover{background:var(--green);color:white;border-color:var(--green)}
+.ci-remove{background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1.1rem;padding:4px;transition:color 0.2s}
+.ci-remove:hover{color:#e05}
+.cart-foot{padding:20px 24px;border-top:1px solid var(--beige-dark)}
+.cart-total{display:flex;justify-content:space-between;font-size:1.1rem;font-weight:500;margin-bottom:16px}
+.cart-total span:last-child{color:var(--green)}
+
+/* FOOTER */
+footer{background:var(--text);color:rgba(255,255,255,0.7);padding:64px 5% 32px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.footer-brand .logo{font-family:var(--font-display);font-size:1.6rem;color:white;margin-bottom:12px}
+.footer-brand p{font-size:0.875rem;line-height:1.7;max-width:240px}
+.footer-col h4{font-size:0.8rem;text-transform:uppercase;letter-spacing:0.12em;color:white;margin-bottom:16px;font-weight:500}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col ul li a{color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.875rem;transition:color 0.2s}
+.footer-col ul li a:hover{color:var(--gold)}
+.social-row{display:flex;gap:12px;margin-top:20px}
+.soc-btn{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:0.85rem;text-decoration:none;color:rgba(255,255,255,0.7);transition:all 0.2s}
+.soc-btn:hover{background:var(--gold);color:var(--green)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:0.8rem}
+
+/* ANIMATIONS */
+.reveal{opacity:0;transform:translateY(30px);transition:all 0.6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:white;padding:14px 24px;border-radius:12px;font-size:0.875rem;z-index:500;transform:translateY(80px);opacity:0;transition:all 0.3s;pointer-events:none;box-shadow:0 8px 24px rgba(45,90,39,0.3)}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* MOBILE */
+.mobile-menu{position:fixed;inset:0;background:rgba(26,61,22,0.98);z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;transform:translateY(-100%);transition:transform 0.4s cubic-bezier(0.4,0,0.2,1)}
+.mobile-menu.open{transform:translateY(0)}
+.mobile-menu a{font-family:var(--font-display);font-size:2rem;color:white;text-decoration:none;opacity:0.85;transition:opacity 0.2s}
+.mobile-menu a:hover{opacity:1;color:var(--gold)}
+.mob-close{position:absolute;top:24px;right:24px;background:none;border:none;color:white;font-size:1.5rem;cursor:pointer}
+
+@media(max-width:768px){
+  .about-story{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .hero-content{padding-top:60px}
+  .models-banner{display:none}
+}
+@media(max-width:480px){
+  .footer-grid{grid-template-columns:1fr}
+  .auth-card{padding:32px 24px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-leaves" id="loaderLeaves"></div>
+  <div class="loader-logo">🌿 EcoWear</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mob-close" onclick="closeMobileMenu()">✕</button>
+  <a href="#" onclick="showPage('home');closeMobileMenu()">Home</a>
+  <a href="#" onclick="showPage('about');closeMobileMenu()">About</a>
+  <a href="#" onclick="showPage('products');closeMobileMenu()">Products</a>
+  <a href="#" onclick="showPage('sale');closeMobileMenu()">Sale</a>
+  <a href="#" onclick="showPage('contact');closeMobileMenu()">Contact</a>
+  <a href="#" onclick="showPage('login');closeMobileMenu()">Login</a>
+</div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="#" class="nav-logo" onclick="showPage('home')">🌿 EcoWear</a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showPage('home')">Home</a></li>
+    <li><a href="#" onclick="showPage('about')">About</a></li>
+    <li><a href="#" onclick="showPage('products')">Products</a></li>
+    <li><a href="#" onclick="showPage('sale')">Sale 🔥</a></li>
+    <li><a href="#" onclick="showPage('contact')">Contact</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="nav-icon" onclick="showPage('login')" title="Account">👤</button>
+    <button class="nav-icon" onclick="toggleCart()" title="Cart" style="position:relative">🛒<span class="cart-count" id="cartCount">0</span></button>
+    <button class="hamburger" onclick="openMobileMenu()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- CART SIDEBAR -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-head">
+    <h3>Your Cart 🛒</h3>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty"><div>🛍️</div><p>Your cart is empty.<br>Start shopping!</p></div>
+  </div>
+  <div class="cart-foot" id="cartFoot" style="display:none">
+    <div class="cart-total"><span>Total</span><span id="cartTotal">₹0</span></div>
+    <button class="btn-primary" style="width:100%;text-align:center;border:none;cursor:pointer;font-family:var(--font-body)" onclick="showToast('Order placed! Thank you 🌿')">Checkout</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== HOME PAGE ===== -->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-pattern"></div>
+    <div class="hero-leaves" id="heroLeaves"></div>
+    <div class="hero-content">
+      <div class="hero-badge">🌱 Sustainable Fashion Since 2019</div>
+      <h1 class="hero-title">Wear <em>Nature</em>,<br>Feel the Future</h1>
+      <p class="hero-sub">Premium eco-friendly clothing crafted from organic cotton, bamboo, and recycled fabrics — for people who care about the planet.</p>
+      <div class="hero-cta">
+        <a href="#" class="btn-primary" onclick="showPage('products')">Shop Now →</a>
+        <a href="#" class="btn-outline" onclick="showPage('about')">Our Story</a>
+      </div>
+    </div>
+    <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
+  </section>
+
+  <div class="eco-strip">
+    <div class="eco-strip-inner" id="ecoStrip"></div>
+  </div>
+
+  <!-- Featured Products -->
+  <section class="featured">
+    <div class="featured-header">
+      <div>
+        <div class="section-label">Curated for You</div>
+        <h2 class="section-title">Featured <em>Products</em></h2>
+        <p class="section-sub">Handpicked from our sustainable collections</p>
+      </div>
+      <a href="#" class="btn-primary" onclick="showPage('products')" style="white-space:nowrap">View All →</a>
+    </div>
+    <div class="featured-grid" id="featuredGrid"></div>
+  </section>
+
+  <!-- Why EcoWear -->
+  <section class="why">
+    <div style="text-align:center">
+      <div class="section-label">Why Choose Us</div>
+      <h2 class="section-title">Fashion that <em>Gives Back</em></h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <div class="why-icon">🌱</div>
+        <div class="why-title">100% Organic</div>
+        <p class="why-text">Every garment is certified organic, free from harmful chemicals and pesticides.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon">♻️</div>
+        <div class="why-title">Zero Waste</div>
+        <p class="why-text">Our production process minimizes waste. Offcuts are repurposed or composted.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon">🤝</div>
+        <div class="why-title">Fair Trade</div>
+        <p class="why-text">We partner with fair-trade certified artisans ensuring ethical working conditions.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon">🌍</div>
+        <div class="why-title">Carbon Neutral</div>
+        <p class="why-text">We offset 100% of our carbon emissions through verified reforestation programs.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <div class="newsletter">
+    <h2>Join the Green Movement</h2>
+    <p>Get 10% off your first order + sustainable living tips every week.</p>
+    <div class="nl-form">
+      <input type="email" placeholder="Your email address">
+      <button class="btn-primary" onclick="showToast('Welcome to the EcoWear family! 🌿')">Subscribe</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">🌿 EcoWear</div>
+        <p>Crafting sustainable fashion for a greener tomorrow. Every purchase plants a tree.</p>
+        <div class="social-row">
+          <a class="soc-btn" href="#">📘</a>
+          <a class="soc-btn" href="#">📸</a>
+          <a class="soc-btn" href="#">🐦</a>
+          <a class="soc-btn" href="#">▶️</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="#" onclick="showPage('products')">All Products</a></li>
+          <li><a href="#" onclick="showPage('products')">Organic Cotton</a></li>
+          <li><a href="#" onclick="showPage('products')">Bamboo Fabric</a></li>
+          <li><a href="#" onclick="showPage('sale')">Sale</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#" onclick="showPage('about')">About Us</a></li>
+          <li><a href="#">Sustainability</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#" onclick="showPage('contact')">Contact</a></li>
+          <li><a href="#">Returns</a></li>
+          <li><a href="#">Shipping</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2024 EcoWear. All rights reserved.</span>
+      <span>Made with 💚 for the planet</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ===== ABOUT PAGE ===== -->
+<div class="page" id="page-about">
+  <div class="about-hero">
+    <h1>Our Green Story</h1>
+    <p>We believe fashion can be a force for good — for people, for communities, and for the planet.</p>
+  </div>
+
+  <div class="about-story">
+    <div class="about-visual">🌳</div>
+    <div class="about-text">
+      <div class="label">Our Mission</div>
+      <h2>Born from a Love<br>for the Earth</h2>
+      <p>EcoWear was founded in 2019 by a group of passionate environmentalists who wanted to prove that sustainable fashion doesn't have to compromise on style or quality.</p>
+      <p>Every EcoWear garment is crafted using materials that respect the earth — organic cotton grown without pesticides, bamboo fabric that needs no irrigation, and recycled materials that give new life to what would otherwise be waste.</p>
+      <p>We are committed to transparency, ethical manufacturing, and making sustainable choices accessible to everyone.</p>
+      <div class="stats-row">
+        <div class="stat-item"><div class="stat-num">50K+</div><div class="stat-label">Happy Customers</div></div>
+        <div class="stat-item"><div class="stat-num">100K</div><div class="stat-label">Trees Planted</div></div>
+        <div class="stat-item"><div class="stat-num">0%</div><div class="stat-label">Carbon Footprint</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="values">
+    <div style="text-align:center">
+      <div style="font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.5);font-weight:500;margin-bottom:12px">Our Values</div>
+      <h2 style="font-family:var(--font-display);font-size:2.2rem;color:white;margin-bottom:8px">What We Stand For</h2>
+    </div>
+    <div class="values-grid">
+      <div class="val-card"><div class="val-icon">🌿</div><div class="val-title">Sustainability</div><p class="val-text">Every decision we make is guided by its environmental impact. Nature first, always.</p></div>
+      <div class="val-card"><div class="val-icon">💎</div><div class="val-title">Quality</div><p class="val-text">Sustainable doesn't mean inferior. Our garments are built to last, reducing consumption.</p></div>
+      <div class="val-card"><div class="val-icon">🤝</div><div class="val-title">Community</div><p class="val-text">We invest in the communities that grow our materials and sew our clothes.</p></div>
+      <div class="val-card"><div class="val-icon">🔍</div><div class="val-title">Transparency</div><p class="val-text">Full supply chain transparency. You can trace every garment back to its source.</p></div>
+    </div>
+  </div>
+
+  <div class="newsletter">
+    <h2>Be Part of the Change</h2>
+    <p>Join 50,000+ conscious consumers making fashion sustainable.</p>
+    <div class="nl-form">
+      <input type="email" placeholder="Your email address">
+      <button class="btn-primary" onclick="showPage('products')">Shop Now →</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">🌿 EcoWear</div>
+        <p>Crafting sustainable fashion for a greener tomorrow.</p>
+      </div>
+      <div class="footer-col"><h4>Quick Links</h4><ul>
+        <li><a href="#" onclick="showPage('home')">Home</a></li>
+        <li><a href="#" onclick="showPage('products')">Products</a></li>
+        <li><a href="#" onclick="showPage('sale')">Sale</a></li>
+        <li><a href="#" onclick="showPage('contact')">Contact</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom"><span>© 2024 EcoWear.</span><span>Made with 💚</span></div>
+  </footer>
+</div>
+
+<!-- ===== PRODUCTS PAGE ===== -->
+<div class="page" id="page-products">
+  <div class="products-header">
+    <div class="section-label" style="color:rgba(255,255,255,0.6)">Our Collections</div>
+    <h1 style="color:white;font-family:var(--font-display)">Shop <em style="color:var(--gold);font-style:italic">Sustainably</em></h1>
+    <div class="search-bar-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search products..." oninput="filterProducts()">
+    </div>
+  </div>
+  <div class="cat-tabs">
+    <button class="cat-tab active" onclick="filterCat('all',this)">All Products</button>
+    <button class="cat-tab" onclick="filterCat('organic',this)">Organic Cotton</button>
+    <button class="cat-tab" onclick="filterCat('bamboo',this)">Bamboo Fabric</button>
+    <button class="cat-tab" onclick="filterCat('recycled',this)">Recycled Wear</button>
+  </div>
+  <div class="products-grid" id="productsGrid">
+    <div class="no-results" id="noResults">No products found matching your search.</div>
+  </div>
+</div>
+
+<!-- ===== SALE PAGE ===== -->
+<div class="page" id="page-sale">
+  <div class="sale-hero">
+    <div class="section-label" style="color:rgba(255,255,255,0.6)">Limited Time</div>
+    <h1>🔥 Eco Sale</h1>
+    <p>Sustainable fashion at unbeatable prices. Don't miss out!</p>
+    <div class="countdown" id="countdown"></div>
+  </div>
+  <div class="sale-grid" id="saleGrid"></div>
+</div>
+
+<!-- ===== CONTACT PAGE ===== -->
+<div class="page" id="page-contact">
+  <div class="contact-hero">
+    <h1>Get in Touch 🌿</h1>
+    <p style="color:rgba(255,255,255,0.75);margin-top:8px">We'd love to hear from you. Always happy to chat about sustainable fashion!</p>
+  </div>
+  <div class="contact-grid">
+    <div>
+      <div class="contact-form-wrap">
+        <h2>Send a Message</h2>
+        <div class="form-group"><label>Your Name</label><input type="text" placeholder="Jane Doe"></div>
+        <div class="form-group"><label>Email Address</label><input type="email" placeholder="jane@email.com"></div>
+        <div class="form-group"><label>Message</label><textarea placeholder="Tell us what's on your mind..."></textarea></div>
+        <button class="btn-primary" style="width:100%;border:none;cursor:pointer;font-family:var(--font-body);font-size:1rem" onclick="showToast('Message sent! We\'ll reply within 24 hours 💚')">Send Message</button>
+      </div>
+    </div>
+    <div>
+      <div class="contact-info">
+        <h3>Contact Information</h3>
+        <div class="info-item"><div class="info-icon">📍</div><div><div class="info-label">Address</div><div class="info-val">42 Green Avenue, Eco Park,<br>Mumbai, Maharashtra 400001</div></div></div>
+        <div class="info-item"><div class="info-icon">📧</div><div><div class="info-label">Email</div><div class="info-val">hello@ecowear.in</div></div></div>
+        <div class="info-item"><div class="info-icon">📞</div><div><div class="info-label">Phone</div><div class="info-val">+91 98765 43210</div></div></div>
+        <a href="https://wa.me/919876543210" class="wa-btn" target="_blank">
+          <span style="font-size:1.2rem">💬</span> Chat on WhatsApp
+        </a>
+        <div class="map-section">
+          <span>🗺️</span>
+          <span>Mumbai, Maharashtra</span>
+          <span style="font-size:0.85rem;color:var(--text-muted);font-family:var(--font-body)">42 Green Avenue, Eco Park</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LOGIN PAGE ===== -->
+<div class="page" id="page-login">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">🌿 EcoWear</div>
+      <div class="auth-sub">Welcome back, eco warrior!</div>
+      <div class="auth-form">
+        <h2>Sign In</h2>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="you@email.com"></div>
+        <div class="form-group"><label>Password</label><input type="password" placeholder="••••••••"></div>
+        <button class="btn-primary" style="width:100%;border:none;cursor:pointer;font-family:var(--font-body);font-size:0.95rem;margin-top:8px" onclick="showToast('Welcome back! 🌿');showPage('home')">Sign In</button>
+        <div class="divider">or</div>
+        <button class="social-btn" onclick="showToast('Google sign-in coming soon!')">🔵 Continue with Google</button>
+        <div class="auth-switch">Don't have an account? <a onclick="showPage('signup')">Sign up free</a></div>
+        <div class="auth-switch" style="margin-top:8px"><a href="#" onclick="showPage('home')">← Back to Home</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SIGNUP PAGE ===== -->
+<div class="page" id="page-signup">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">🌿 EcoWear</div>
+      <div class="auth-sub">Join the green revolution today</div>
+      <div class="auth-form">
+        <h2>Create Account</h2>
+        <div class="form-group"><label>Full Name</label><input type="text" placeholder="Jane Doe"></div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="you@email.com"></div>
+        <div class="form-group"><label>Password</label><input type="password" placeholder="Min. 8 characters"></div>
+        <div class="form-group"><label>Confirm Password</label><input type="password" placeholder="Repeat password"></div>
+        <button class="btn-primary" style="width:100%;border:none;cursor:pointer;font-family:var(--font-body);font-size:0.95rem;margin-top:8px" onclick="showToast('Account created! Welcome 🌿');showPage('home')">Create Account</button>
+        <div class="divider">or</div>
+        <button class="social-btn" onclick="showToast('Google sign-up coming soon!')">🔵 Sign up with Google</button>
+        <div class="auth-switch">Already have an account? <a onclick="showPage('login')">Sign in</a></div>
+        <div class="auth-switch" style="margin-top:8px"><a href="#" onclick="showPage('home')">← Back to Home</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const products = [
+  {id:1,name:'Forest Breeze Tee',cat:'organic',price:1299,orig:null,emoji:'👕',bg:'#c8e6c0',badge:'organic',desc:'100% organic cotton'},
+  {id:2,name:'Bamboo Comfort Shirt',cat:'bamboo',price:1699,orig:null,emoji:'👔',bg:'#d4e8c2',badge:'new',desc:'Silky bamboo fabric'},
+  {id:3,name:'Eco Canvas Jacket',cat:'recycled',price:3499,orig:4200,emoji:'🧥',bg:'#e8d8b0',badge:'sale',desc:'Recycled canvas'},
+  {id:4,name:'Meadow Linen Dress',cat:'organic',price:2199,orig:null,emoji:'👗',bg:'#f0e8d0',badge:'organic',desc:'Pure linen organic'},
+  {id:5,name:'Bamboo Track Pants',cat:'bamboo',price:1499,orig:null,emoji:'👖',bg:'#c8dcc0',badge:'new',desc:'Ultra-soft bamboo'},
+  {id:6,name:'Nature Hoodie',cat:'organic',price:2799,orig:3200,emoji:'🧣',bg:'#d0e4d0',badge:'sale',desc:'Organic fleece'},
+  {id:7,name:'Recycle Blend Tee',cat:'recycled',price:999,orig:1299,emoji:'👕',bg:'#dce8d0',badge:'sale',desc:'50% recycled fabric'},
+  {id:8,name:'Green Earth Kurta',cat:'organic',price:1899,orig:null,emoji:'👘',bg:'#e8f0d8',badge:'organic',desc:'Organic handloom'},
+  {id:9,name:'Bamboo Yoga Wear',cat:'bamboo',price:1399,orig:null,emoji:'🩱',bg:'#c0dcc0',badge:'new',desc:'4-way stretch'},
+  {id:10,name:'EcoWeave Shorts',cat:'recycled',price:799,orig:999,emoji:'🩲',bg:'#d8e8c8',badge:'sale',desc:'Recycled polyester'},
+  {id:11,name:'Terra Linen Top',cat:'organic',price:1099,orig:null,emoji:'👚',bg:'#ece0c8',badge:'organic',desc:'Natural dye colors'},
+  {id:12,name:'Bamboo Blazer',cat:'bamboo',price:4299,orig:5000,emoji:'🥻',bg:'#d0e4d4',badge:'sale',desc:'Premium bamboo weave'},
+];
+
+const saleProducts = products.filter(p=>p.orig).map(p=>({...p,discount:Math.round((1-p.price/p.orig)*100)}));
+const cart = [];
+let currentCat = 'all';
+let wishes = new Set();
+
+// ===== INIT =====
+window.addEventListener('load',()=>{
+  setTimeout(()=>{document.getElementById('loader').classList.add('hide')},2000);
+  generateLeaves();
+  generateEcoStrip();
+  renderFeatured();
+  renderProducts();
+  renderSale();
+  startCountdown();
+  initScrollReveal();
+  initNav();
+});
+
+// ===== LEAVES =====
+function generateLeaves(){
+  const hero=document.getElementById('heroLeaves');
+  const lLeaves=document.getElementById('loaderLeaves');
+  const leafEmojis=['🍃','🌿','🍀','🌱'];
+  for(let i=0;i<20;i++){
+    const d=document.createElement('div');
+    d.className='h-leaf';
+    d.textContent=leafEmojis[i%4];
+    d.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;font-size:${1+Math.random()*2}rem;animation:leaffall ${3+Math.random()*4}s linear ${Math.random()*3}s infinite`;
+    if(hero)hero.appendChild(d);
+  }
+  for(let i=0;i<15;i++){
+    const d=document.createElement('div');
+    d.className='l-leaf';
+    d.textContent=leafEmojis[i%4];
+    d.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*20}%;animation-delay:${Math.random()*3}s;animation-duration:${3+Math.random()*2}s`;
+    if(lLeaves)lLeaves.appendChild(d);
+  }
+}
+
+// ===== ECO STRIP =====
+function generateEcoStrip(){
+  const items=['100% Organic','Carbon Neutral','Zero Waste','Fair Trade Certified','Plastic Free','Tree Planted Per Order','Ethically Made','Biodegradable Packaging'];
+  const strip=document.getElementById('ecoStrip');
+  if(!strip)return;
+  const doubled=[...items,...items];
+  strip.innerHTML=doubled.map(i=>`<span class="eco-item"><span class="eco-dot"></span>${i}</span>`).join('');
+}
+
+// ===== RENDER PRODUCTS =====
+function prodCard(p,showDiscount=false){
+  const isWished=wishes.has(p.id);
+  const badgeHtml=p.badge==='organic'?`<span class="badge badge-organic">🌱 Organic</span>`:
+    p.badge==='sale'?`<span class="badge badge-sale">SALE</span>`:
+    `<span class="badge badge-new">NEW</span>`;
+  const priceHtml=p.orig?`<div style="display:flex;gap:8px;align-items:center"><span class="prod-price">₹${p.price.toLocaleString()}</span><span class="prod-price-orig">₹${p.orig.toLocaleString()}</span>${showDiscount?`<span class="badge badge-sale">${p.discount}% OFF</span>`:''}</div>`:
+    `<span class="prod-price">₹${p.price.toLocaleString()}</span>`;
+  return `<div class="prod-card" data-cat="${p.cat}" data-name="${p.name.toLowerCase()}">
+    <div class="prod-img" style="background:${p.bg}">
+      <span style="font-size:4rem">${p.emoji}</span>
+      <div class="prod-badges">${badgeHtml}</div>
+      <button class="prod-wish ${isWished?'active':''}" onclick="toggleWish(${p.id},this)">${isWished?'❤️':'🤍'}</button>
+    </div>
+    <div class="prod-info">
+      <div class="prod-cat">${p.cat==='organic'?'Organic Cotton':p.cat==='bamboo'?'Bamboo Fabric':'Recycled Wear'}</div>
+      <div class="prod-name">${p.name}</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:10px">${p.desc}</div>
+      <div class="prod-price-row">
+        ${priceHtml}
+        <button class="btn-cart" onclick="addToCart(${p.id})">Add to Cart</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderFeatured(){
+  const grid=document.getElementById('featuredGrid');
+  if(!grid)return;
+  grid.innerHTML=products.slice(0,4).map(p=>prodCard(p)).join('');
+}
+
+function renderProducts(){
+  const grid=document.getElementById('productsGrid');
+  if(!grid)return;
+  const search=(document.getElementById('searchInput')?.value||'').toLowerCase();
+  const filtered=products.filter(p=>{
+    const matchCat=currentCat==='all'||p.cat===currentCat;
+    const matchSearch=!search||p.name.toLowerCase().includes(search)||p.desc.toLowerCase().includes(search)||p.cat.includes(search);
+    return matchCat&&matchSearch;
+  });
+  const cards=filtered.map(p=>prodCard(p)).join('');
+  const noRes=document.getElementById('noResults');
+  grid.innerHTML=`<div class="no-results ${filtered.length===0?'show':''}" id="noResults">No products found.</div>`+cards;
+}
+
+function renderSale(){
+  const grid=document.getElementById('saleGrid');
+  if(!grid)return;
+  grid.innerHTML=saleProducts.map(p=>prodCard(p,true)).join('');
+}
+
+function filterCat(cat,btn){
+  currentCat=cat;
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts();
+}
+
+function filterProducts(){renderProducts()}
+
+// ===== CART =====
+function addToCart(id){
+  const p=products.find(x=>x.id===id);
+  if(!p)return;
+  const existing=cart.find(x=>x.id===id);
+  if(existing)existing.qty++;
+  else cart.push({...p,qty:1});
+  updateCart();
+  showToast(`${p.emoji} ${p.name} added to cart!`);
+}
+
+function removeFromCart(id){
+  const idx=cart.findIndex(x=>x.id===id);
+  if(idx>-1)cart.splice(idx,1);
+  updateCart();
+}
+
+function changeQty(id,delta){
+  const item=cart.find(x=>x.id===id);
+  if(!item)return;
+  item.qty+=delta;
+  if(item.qty<=0)removeFromCart(id);
+  else updateCart();
+}
+
+function updateCart(){
+  const count=cart.reduce((a,x)=>a+x.qty,0);
+  document.querySelectorAll('#cartCount').forEach(el=>el.textContent=count);
+  const total=cart.reduce((a,x)=>a+x.price*x.qty,0);
+  const tEl=document.getElementById('cartTotal');
+  if(tEl)tEl.textContent='₹'+total.toLocaleString();
+  const foot=document.getElementById('cartFoot');
+  if(foot)foot.style.display=cart.length?'block':'none';
+  const itemsEl=document.getElementById('cartItems');
+  if(!itemsEl)return;
+  if(!cart.length){itemsEl.innerHTML='<div class="cart-empty"><div>🛍️</div><p>Your cart is empty.</p></div>';return;}
+  itemsEl.innerHTML=cart.map(item=>`<div class="cart-item">
+    <div class="ci-img">${item.emoji}</div>
+    <div class="ci-info">
+      <div class="ci-name">${item.name}</div>
+      <div class="ci-price">₹${item.price.toLocaleString()}</div>
+      <div class="ci-qty">
+        <button class="qty-btn" onclick="changeQty(${item.id},-1)">−</button>
+        <span style="font-size:0.875rem;font-weight:500">${item.qty}</span>
+        <button class="qty-btn" onclick="changeQty(${item.id},1)">+</button>
+      </div>
+    </div>
+    <button class="ci-remove" onclick="removeFromCart(${item.id})">🗑️</button>
+  </div>`).join('');
+}
+
+function toggleCart(){
+  document.getElementById('cartSidebar').classList.toggle('open');
+  document.getElementById('cartOverlay').classList.toggle('open');
+}
+
+// ===== WISHLIST =====
+function toggleWish(id,btn){
+  if(wishes.has(id)){wishes.delete(id);btn.textContent='🤍';btn.classList.remove('active');showToast('Removed from wishlist');}
+  else{wishes.add(id);btn.textContent='❤️';btn.classList.add('active');showToast('Added to wishlist ❤️');}
+}
+
+// ===== COUNTDOWN =====
+function startCountdown(){
+  const end=new Date(Date.now()+2*24*60*60*1000+5*60*60*1000+30*60*1000);
+  function tick(){
+    const diff=end-Date.now();
+    if(diff<=0)return;
+    const h=Math.floor(diff/3600000)%24;
+    const m=Math.floor(diff/60000)%60;
+    const s=Math.floor(diff/1000)%60;
+    const d=Math.floor(diff/86400000);
+    const el=document.getElementById('countdown');
+    if(el)el.innerHTML=[['Days',d],['Hours',h],['Mins',m],['Secs',s]].map(([l,v])=>`<div class="cd-box"><div class="cd-num">${String(v).padStart(2,'0')}</div><div class="cd-label">${l}</div></div>`).join('');
+  }
+  tick();setInterval(tick,1000);
+}
+
+// ===== NAV =====
+function initNav(){
+  window.addEventListener('scroll',()=>{
+    const nav=document.getElementById('mainNav');
+    nav.classList.toggle('scrolled',window.scrollY>60);
+  });
+}
+
+// ===== PAGES =====
+function showPage(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const el=document.getElementById('page-'+page);
+  if(el){el.classList.add('active');window.scrollTo(0,0);}
+  const isHome=page==='home'||page==='about'||page==='products'||page==='sale'||page==='contact';
+  const nav=document.getElementById('mainNav');
+  nav.classList.toggle('scrolled',page==='login'||page==='signup');
+  if(page==='products')renderProducts();
+}
+
+// ===== MOBILE MENU =====
+function openMobileMenu(){document.getElementById('mobileMenu').classList.add('open')}
+function closeMobileMenu(){document.getElementById('mobileMenu').classList.remove('open')}
+
+// ===== TOAST =====
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ===== SCROLL REVEAL =====
+function initScrollReveal(){
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+  },{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+</script>
+</body>
+</html>
